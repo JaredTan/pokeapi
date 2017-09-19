@@ -22483,7 +22483,8 @@ var Pokemon = function (_React$Component) {
       errors: '',
       name: '',
       type1: '',
-      type2: ''
+      type2: '',
+      stats: []
     };
 
     _this.handleChange = _this.handleChange.bind(_this);
@@ -22505,11 +22506,13 @@ var Pokemon = function (_React$Component) {
 
       e.preventDefault();
       this.resetState();
-      var apiUrl = 'http://pokeapi.co/api/v2/pokemon/' + this.state.searchQuery;
+      var apiUrl = 'https://pokeapi.co/api/v2/pokemon/' + this.state.searchQuery;
       _superagent2.default.get(apiUrl).then(function (response, err) {
+        console.log(response);
         _this2.setState({
           name: response.body.forms[0].name,
-          type1: response.body.types[0].type.name
+          type1: response.body.types[0].type.name,
+          stats: response.body.stats
         });
         if (response.body.types[1]) {
           _this2.setState({
@@ -22527,12 +22530,22 @@ var Pokemon = function (_React$Component) {
         errors: '',
         name: '',
         type1: '',
-        type2: ''
+        type2: '',
+        stats: []
       });
     }
   }, {
     key: 'render',
     value: function render() {
+      var displayStats = this.state.stats.map(function (object) {
+        return _react2.default.createElement(
+          'li',
+          null,
+          object.stat.name,
+          ': ',
+          object.base_stat
+        );
+      });
       return _react2.default.createElement(
         'div',
         null,
@@ -22542,7 +22555,7 @@ var Pokemon = function (_React$Component) {
           'Search for a Pokemon!'
         ),
         _react2.default.createElement('br', null),
-        _react2.default.createElement('input', { ref: 'query', className: 'search-input', placeholder: 'type here', value: this.state.searchQuery, onChange: this.handleChange }),
+        _react2.default.createElement('input', { placeholder: 'type here', value: this.state.searchQuery, onChange: this.handleChange }),
         _react2.default.createElement(
           'button',
           { onClick: this.search },
@@ -22569,12 +22582,14 @@ var Pokemon = function (_React$Component) {
             this.state.type1
           ),
           _react2.default.createElement('br', null),
-          this.state.type2 == '' ? null : _react2.default.createElement(
+          _react2.default.createElement(
             'span',
             null,
             'Type 2: ',
             this.state.type2
-          )
+          ),
+          _react2.default.createElement('br', null),
+          displayStats
         ),
         _react2.default.createElement(
           'span',
